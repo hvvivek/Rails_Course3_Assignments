@@ -1,4 +1,5 @@
 class Place
+    include ActiveModel::Model
     attr_accessor :id, :formatted_address, :location, :address_components
     
     #Class Methods
@@ -147,5 +148,15 @@ class Place
         max_distance = max_meters
         set = Place.near(point, max_distance)
         Place.to_places(set)
+    end
+
+    def photos(skip=0, limit=nil)
+        result = Photo.find_photos_for_place(id).skip(skip)
+        result = result.limit(limit) if !limit.nil?
+        result.map{|r| Photo.new(r)}
+    end
+
+    def persisted?
+        !@id.nil?
     end
 end
